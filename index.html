@@ -204,7 +204,6 @@ def PrintScreen():
                     <div class="fragment">
                         <pre><code class="line-numbers" data-trim contenteditable>
 def Update():
-    global screen
     s = len(screen); line = []
     for j in range(width):
         line.append(' ')
@@ -230,15 +229,7 @@ def Update():
                     </div>
                 </section>
                 <section>
-                    <p class="fragment">Step 4: Loop</p>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-def Loop():
-    Update()
-    PrintScreen()
-</code></pre>
-                    </div>
-                    <p class="fragment">Step 5: Console</p>
+                    <p class="fragment">Step 4: Console</p>
                     <div class="fragment">
                         <pre><code class="line-numbers" data-trim contenteditable>
 def Start():
