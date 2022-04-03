@@ -3,458 +3,1040 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lecture 7</title>
-    <link rel="stylesheet" href="css/reveal.css">
-    <link rel="stylesheet" href="css/theme/white.css">
-    <link rel="stylesheet" href="css/theme/custom.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/white.css" id="theme">
     <!-- Theme used for syntax highlighting of code -->
-    <link rel="stylesheet" href="lib/css/googlecode.css">
-    <!-- Printing and PDF exports -->
-    <script>
-    var link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-    link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
-    document.getElementsByTagName('head')[0].appendChild(link);
-    </script>
+    <link rel="stylesheet" href="plugin/highlight/github.css">
+    <link rel="stylesheet" href="plugin/chalkboard/style.css">
+    <link rel="stylesheet" href="plugin/customcontrols/style.css">
+    <link rel="stylesheet" href="plugin/menu/font-awesome/css/all.css">
 </head>
 
 <body>
     <div class="reveal" style="background-color: #fff;">
         <div class="slides">
             <section data-background-video="bgm.mp4" data-background-video-loop data-background-video-muted style="text-align: left;">
-                <h2 style="color: white">Python Programming</h2>
-                <h5 style="color: white">Lecture 7 Complex Systems, Game of Life</h5>
+                <h1 style="color: white">Python Programming</h1>
+                <h3 style="color: white">Lecture 7 Variable Scope, Arbitrary Arguments </h3>
             </section>
             <section>
                 <section data-background="#2980b9" style="color: white">
-                    <h2 style="color: white">7.1 Complex Systems</h2>
+                    <h2 style="color: white">7.1 Variable Scope</h2>
+                </section>
+                <section>
+                    <h3>Variable Scope</h3>
+                    <p>In Python, module, class, def, lambda can introduce new variable scope, if/elif/else/, try/except, for/while will not introduce new variable scope.</p>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+if True:
+    msg = 'I am from Shanghai'
+print(msg) # We can use msg.
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def test():
+    msg = 'I am from Shanghai'
+print(msg) # error
+</code></pre>
+                    </div>
+                    <p class="fragment">Global and Local</p>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+msg_loc = "Shanghai" # Global
+def test():
+    msg = 'I am from Shanghai' # Local
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <p class="fragment">New Assignment</p>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+msg = 'I am from Shanghai'
+def test():
+    msg = 'I am from Beijing'
+    print(msg) 
+test()
+print(msg)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+I am from Beijing
+I am from Shanghai
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <p class="fragment"><b>Reference</b></p>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+msg = 'I am from Shanghai'
+def test():
+    print(msg) 
+test()
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+I am from Shanghai
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <p class="fragment">Modification</p>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+msg = 'I am from Shanghai'
+def test():
+    print(msg) 
+    msg = 'I am from Beijing' 
+test() 
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="error" contenteditable>
+UnboundLocalError: local variable 'msg' 
+referenced before assignment
+
+
+</code></pre>
+                        </div>
+                    </div>
                 </section>
                 <section>
                     <ul>
                         <li class="fragment">
-                            <p>The game in Lecture 2 is boring. Why?</p>
+                            <p>How to modify the variable outside? The <b>global</b> keyword</p>
                         </li>
+                    </ul>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+num = 1
+def fun():
+    global num
+    num = 123
+    print(num)
+fun()
+print(num)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+123
+123
+
+
+ 
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+num = 1
+def fun():
+    print(num)
+    global num  
+    num = 123
+    print(num)
+fun()
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="error" contenteditable>
+SyntaxError: name 'num' is used 
+prior to global declaration
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+a = 10
+def test():
+    a = a + 1
+    print(a)
+test()
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="error" contenteditable>
+UnboundLocalError: local variable 'a' 
+referenced before assignment
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+a = 10
+def test():
+    global a 
+    a = a + 1
+    print(a)
+test()
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+11
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+a = 10
+def test():
+    a = 10
+    a = a + 1
+    print(a)
+test() 
+print(a) 
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+11
+10
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <h3>mutable vs. immutable</h3>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+a = [1,2,3]
+def test():
+    print(a)
+    a = [1,2,3,4]
+test() 
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="error" contenteditable>
+UnboundLocalError: local variable 'a' 
+referenced before assignment
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+a = [1,2,3]
+def test():
+    print(a)
+    a.append(4)
+test() 
+print(a)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+[1, 2, 3]
+[1, 2, 3, 4]
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+a = {"color": "green"}
+def test():
+    print(a)
+    a["color"] = "red"
+    a["position"] = "left"
+test() 
+print(a)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+{'color': 'green'}
+{'color': 'red', 'position': 'left'}
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <h3>Parameter and Argument</h3>
+                    <ul>
+                        <li>
+                            <p>For immutable objects (number, string, tuple), the assignment inside a function cannot change the value of the variable outside the function even if the variable name inside is the same with the variable name outside.</p>
+                        </li>
+                    </ul>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def ChangeInt(a):
+    a = 10
+    return a
+
+b = 2
+print(ChangeInt(b))
+print(b) 
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+2
+10
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def ChangeInt(b):
+    b = 10
+    return b
+
+b = 2
+x = ChangeInt(b)
+print(x, b) 
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+10 2
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <h3>Examples</h3>
+                    <div class="div-a">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def ChangeInt(a):
+    a = 10
+    print(a)
+    return a
+
+b = 2
+ChangeInt(b)
+print(b) 
+print(ChangeInt(b))
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-b">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+10
+2
+10
+10
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-a">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def ChangeInt(a):
+    a = 10
+    print(a)
+
+b = 2
+ChangeInt(b)
+print(b) 
+print(ChangeInt(b))
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-b">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+10
+2
+10
+None
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <ul>
+                        <li>
+                            <p>For mutable objects (list, dictionary), the <b>assignment</b> inside a function cannot change the value of the variable outside the function.<b> (the same with immutable objects!)</b></p>
+                        </li>
+                    </ul>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def changeme(mylist):
+   mylist = [1,2]
+   print("inside: ", mylist)
+ 
+x = [10,20]
+changeme(x)
+print("outside: ", x)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+inside:  [1, 2]
+outside:  [10, 20]
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <ul>
                         <li class="fragment">
-                            <p>Each challenge is a unique puzzle, and each puzzle has a unique action that solves it.</p>
+                            <p>However, the modification <b>can</b> change the value of the variable outside.</p>
                         </li>
+                    </ul>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def changeme(mylist):
+   mylist.extend([1,2])
+   print ("inside: ", mylist)
+ 
+x = [10,20]
+changeme(x)
+print ("outside: ", x)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+inside:  [10, 20, 1, 2]
+outside:  [10, 20, 1, 2]
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+            <section>
+                <section data-background="#2980b9" style="color: white">
+                    <h2 style="color: white">7.2 Nested Functions</h2>
+                </section>
+                <section>
+                    <h3>Nested Functions</h3>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def outer():
+    def inner():
+        print(100)
+    inner()
+outer()
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def outer():
+    def inner():
+        num = 100
+        print(num)
+    inner()
+outer()
+</code></pre>
+                    </div>
+                    <ul>
                         <li class="fragment">
-                            <p>In Tetris, the challenge is created by a combination of a random sequence of tetrominoes and the player's previous actions in dealing with them.
-                            </p>
+                            <p>Local$\rightarrow$Enclosing$\rightarrow$Global$\rightarrow$ Build-in (LEGB)</p>
                         </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+num = 3           # Global
+def outer():
+    num = 10      # Enclosing
+    def inner():
+        num = 100 # Local
+        print(num)
+    inner()
+    print(num)
+outer()
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <h5>The nonlocal keyword</h6>
                         <div class="div-c">
-                            <div class="fragment"><img data-src="tetris.png" style="height: 250pt"></div>
+                            <div class="fragment">
+                                <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def outer():
+    num = 10
+    def inner():
+        nonlocal num   
+        # nonlocal keyword
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+</code></pre>
+                            </div>
                         </div>
                         <div class="div-d">
-                            <div class="fragment"><img data-src="jump.jpg" style="height: 250pt"></div>
+                            <div class="fragment">
+                                <pre><code class="output"  contenteditable>
+100
+100
+
+
+
+
+
+
+
+</code></pre>
+                            </div>
                         </div>
-                    </ul>
-                </section>
-                <section>
-                    <h3>Games of Emergence</h3>
-                    <ul>
-                        <li class="fragment">
-                            <p>Games of emergence have a high replay value because the challenges and possible actions that occur while playing are different every time.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>It is very hard to predict whether interesting gameplay will emerge from a particular game simply by looking at the rules.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>It should be clear that creating emergence is not simply a matter of having many rules. You cannot create a more interesting game simply by adding more rules. In fact, sometimes it is more effective to reduce the number of rules to create a system that displays truly interesting and emergent gameplay.</p>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <h3>Complex Systems</h3>
-                    <ul>
-                        <li class="fragment">
-                            <p>The system consists of many parts.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>These parts are often quite simple to understand and to model individually. (The Butterfly Effect)</p>
-                        </li>
-                        <li class="fragment">
-                            <p>When these parts are put together, most complex systems display surprising and unpredictable behavior that can be difficult to explain just by looking at the parts separately.</p>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <ul>
-                        <li class="fragment">
-                            <p>Can emergence be Designed?</p>
-                        </li>
-                        <h3 class="fragment">Cellular Automaton (元胞自动机)</h3>
-                        <ul>
-                            <li class="fragment">
-                                <p>At the boundary of mathematics, computer science, and games lies a peculiar field that studies <b>cellular automaton</b>.</p>
-                            </li>
-                            <li class="fragment">
-                                <p>Cellular automaton is a simple set of rules governing the appearance of spaces, or cells, in a line or on a grid. </p>
-                            </li>
-                            <li class="fragment">
-                                <p>Each cell may be either black or white. The rules determine what causes a cell to change from black to white (or vice versa) and how the color of a cell influences the cells around it.</p>
-                            </li>
-                            <li class="fragment">
-                                <p>Mathematicians think of such a collection of rules as a hypothetical machine that operates by itself without human intervention. This is why they are called automata.</p>
-                            </li>
-                        </ul>
-                </section>
-                <section>
-                    <ul>
-                        <li class="fragment">
-                            <p>A cellular automaton starts with its cells in a given configuration (some white, some black) and then applies the rules to each cell to determine whether its color should change.
-                            </p>
-                        </li>
-                        <li class="fragment">
-                            <p>It does not change a cell immediately; it checks every cell in the grid first, marks the ones to be changed, and then changes them all before the next iteration. Then it repeats the process. Each iteration is called a <b>generation</b>.</p>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <ul>
-                        <li class="fragment">
-                            <p>British scientist Stephen Wolfram has created a simple cellular automaton that exhibits emergent behavior.</p>
-                        </li>
-                    </ul>
-                    <div class="fragment"><img data-src="wolfram.jpg" style="height: 250pt"></div>
-                    <ul>
-                        <li class="fragment">
-                            <p>He was named an inaugural fellow of the American Mathematical Society. he is the founder and CEO of the software company Wolfram Research where he worked as chief designer of Mathematica and the Wolfram Alpha answer engine.</p>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <h3>The simple cellular automaton</h3>
-                    <div class="fragment"><img data-src="rule.png" style="height: 100pt"></div>
-                    <ul>
-                        <li class="fragment">
-                            <p>It displays one set of possible rules and the resulting, surprisingly complex pattern that is created by printing each new generation of the system under the previous one. It begins with one black cell and all the rest white.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>Notice that even though there is nothing random in the rules, this cellular automaton produces a pattern with distinctive and apparently random features.</p>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <div class="fragment"><img data-src="firstca.png" style="height: 500pt"></div>
-                </section>
-                <section>
-                    <ul>
-                        <li class="fragment">
-                            <p>Wolfram described his work in detail in his book A New Kind of Science (2002).</p>
-                            <ul>
-                                <li class="fragment">
-                                    <p>They must consist of simple cells whose rules are defined locally.</p>
-                                </li>
-                                <li class="fragment">
-                                    <p>The system must allow for long-range communication.</p>
-                                </li>
-                                <li class="fragment">
-                                    <p>The level of activity of the cells is a good indicator for the complexity of the behavior of the system.</p>
-                                </li>
-                                <li class="fragment">
-                                    <p>Cellular automata show us that the threshold for complexity is surprisingly low.</p>
-                                </li>
-                                <li class="fragment">
-                                    <p>Application</p>
-                                </li>
-                                <li class="fragment">
-                                    <p>Let's build this simple model with Python.</p>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-import os
+                        <div class="div-c">
+                            <div class="fragment">
+                                <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def outer():
+    num = 10
+    def inner():
+        global num  
+        # global does not work
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+</code></pre>
+                            </div>
+                        </div>
+                        <div class="div-d">
+                            <div class="fragment">
+                                <pre><code class="output"  contenteditable>
+100 
+10
 
-width = 100
-height = 1
-screen = []
-</code></pre>
-                    </div>
-                    <p class="fragment">Step 1: Initialization</p>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-def Init():
-    for i in range(height):
-        line = []
-        for j in range(width):
-            line.append(' ')
-        screen.append(line)
-    screen[0][50]='#'
-</code></pre>
-                    </div>
-                    <p class="fragment">Step 2: Show the screen</p>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-def PrintScreen():
-    for i in range(len(screen)):
-        for j in range(width):
-            print(screen[i][j] + ' ', end='')
-        print('|')
-</code></pre>
-                    </div>
-                </section>
-                <section>
-                    <p class="fragment">Step 3: Add a new generation</p>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-def Update():
-    s = len(screen); line = []
-    for j in range(width):
-        line.append(' ')
-    screen.append(line)
-    for j in range(width-1):
-        if screen[s-1][j-1]=='#' and screen[s-1][j]=='#' and screen[s-1][j+1]=='#':
-            screen[s][j] = ' '
-        elif screen[s-1][j-1]=='#' and screen[s-1][j]=='#' and screen[s-1][j+1]==' ':
-            screen[s][j] = ' '
-        elif screen[s-1][j-1]=='#' and screen[s-1][j]==' ' and screen[s-1][j+1]=='#':
-            screen[s][j] = ' '
-        elif screen[s-1][j-1]=='#' and screen[s-1][j]==' ' and screen[s-1][j+1]==' ':
-            screen[s][j] = '#'
-        elif screen[s-1][j-1]==' ' and screen[s-1][j]=='#' and screen[s-1][j+1]=='#':
-            screen[s][j] = '#'
-        elif screen[s-1][j-1]==' ' and screen[s-1][j]=='#' and screen[s-1][j+1]==' ':
-            screen[s][j] = '#'
-        elif screen[s-1][j-1]==' ' and screen[s-1][j]==' ' and screen[s-1][j+1]=='#':
-            screen[s][j] = '#'
-        elif screen[s-1][j-1]==' ' and screen[s-1][j]==' ' and screen[s-1][j+1]==' ':
-            screen[s][j] = ' '
-</code></pre>
-                    </div>
-                </section>
-                <section>
-                    <p class="fragment">Step 4: Console</p>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-def Start():
-    os.system("cls")
-    print('== Game of Life ==')
-    print('Press any key...')
-    input()
-    os.system("cls")
-    Init()
-    PrintScreen()
-    c = input()
-    while c!= 'q':
-        os.system("cls")
-        Update()
-        PrintScreen()   
-        c = input()
-    print('End')
 
-Start()
+
+
+
+
+
 </code></pre>
+                            </div>
+                        </div>
+                </section>
+                <section>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def outer():
+    global num
+    num = 10
+    def inner():
+        global num   
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+</code></pre>
+                        </div>
                     </div>
-                    <p class="fragment">Command line</p>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100
+100
+
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def outer():
+    global num
+    num = 10
+    def inner():  
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100 
+10
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+num = 3                            
+def outer():
+    global num
+    num = 10
+    def inner():  
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+print(num)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100
+10
+10
+
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+num = 3                            
+def outer():
+    num = 10
+    def inner(): 
+        global num 
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+print(num)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100
+10
+100
+
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+num = 3                            
+def outer():
+    num = 10
+    def inner(): 
+        nonlocal num 
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+print(num)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100
+100
+3
+
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+num = 3                            
+def outer():
+    global num
+    num = 10
+    def inner(): 
+        global num 
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+print(num)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100
+100
+100
+
+
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
                 </section>
             </section>
             <section>
                 <section data-background="#2980b9" style="color: white">
-                    <h2 style="color: white">7.2 Game of Life</h2>
-                </section>
-                <section>
-                    <h3>Game of Life</h3>
-                    <ul>
-                        <li class="fragment">
-                            <p>Probably the most famous cellular automaton was invented by John Conway and is called the Game of Life.</p>
-                        </li>
-                    </ul>
-                    <div class="fragment"><img data-src="conway.jpg" style="height: 200pt"></div>
-                    <ul>
-                        <li class="fragment">
-                            <p>Conway was a Professor Emeritus of Mathematics at Princeton University in New Jersey.</p>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <ul>
-                        <li class="fragment">
-                            <p>Conway's automaton consists of cells that are laid out on a two-dimensional grid.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>this grid goes on indefinitely in all directions. Each cell on the grid has eight neighbors: the cells that surround it orthogonally and diagonally. Each cell can be in two different states: It is either dead or alive.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>In most examples, dead cells are rendered white, while live cells are colored black.</p>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <h3>Rules</h3>
-                    <ul>
-                        <li class="fragment">
-                            <p>A live cell that has fewer than two live neighbors dies from loneliness.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>A live cell that has more than three live neighbors dies from overcrowding.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>A live cell that has two or three live neighbors stays alive.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>A dead cell that has exactly three live neighbors becomes alive.</p>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <h3>Example</h3>
-                    <div class="fragment"><img data-src="iteration.png" style="height: 100pt"></div>
-                    <ul>
-                        <li class="fragment">
-                            <p>When set into motion, the Game of Life usually has quite chaotic results, with a lot of activity exploding from its original live cells.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>Demo: Game of Life (Random)</p>
-                        </li>
-                        <li class="fragment">
-                            <p>Frequently after a number of iterations the Game of Life settles in a more or less stable configuration, sometimes with a few groups of cells that oscillate between two states.</p>
-                        </li>
-                    </ul>
+                    <h2 style="color: white">7.3 Arbitrary Arguments</h2>
                 </section>
                 <section>
                     <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-import os
-import random
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def make_pizza(toppings):
+    print(toppings)
 
-width = 60
-height = 60
-screen = []
+make_pizza('pepperoni')
 </code></pre>
                     </div>
-                    <p class="fragment">Step 1: Initialization</p>
+                    <ul>
+                        <li class="fragment">
+                            <p>If we want to pass multiple arguments, we may create a list at first.</p>
+                        </li>
+                    </ul>
                     <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-def Init():
-    for i in range(height):
-        line = []
-        for j in range(width):
-            if random.random() > 0.8:
-                line.append('#')
-            else:
-                line.append(' ')
-        screen.append(line)
-</code></pre>
-                    </div>
-                    <p class="fragment">Step 2: Show the screen</p>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-def PrintScreen():
-    for i in range(height):
-        for j in range(width):
-            print(screen[i][j] + ' ', end='')
-        print()
-</code></pre>
-                    </div>
-                </section>
-                <section>
-                    <p class="fragment">Step 3: Get cells</p>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-def TryGetCell(i, j):
-    i = i % height
-    j = j % width
-    return screen[i][j]
-</code></pre>
-                    </div>
-                    <p class="fragment">Step 4: Count cells nearby</p>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-def GetNearbyCellsCount(i, j):
-    nearby = []
-    nearby.append(TryGetCell(i - 1, j - 1))
-    nearby.append(TryGetCell(i - 1, j))
-    nearby.append(TryGetCell(i - 1, j + 1))
-    nearby.append(TryGetCell(i, j - 1))
-    nearby.append(TryGetCell(i, j + 1))
-    nearby.append(TryGetCell(i + 1, j - 1))
-    nearby.append(TryGetCell(i + 1, j))
-    nearby.append(TryGetCell(i + 1, j + 1))
-    num = 0
-    for x in nearby:
-        if x == '#':
-            num = num + 1
-    return num
-</code></pre>
-                    </div>
-                </section>
-                <section>
-                    <p class="fragment">Step 5: Update</p>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-def Update():
-    global screen
-    newScreen = []
-    for i in range(height):
-        line = []
-        for j in range(width):
-            line.append(' ')
-        newScreen.append(line)
-    for i in range(height):
-        for j in range(width):
-            count = GetNearbyCellsCount(i, j)
-            if count == 3:
-                newScreen[i][j] = '#'
-            elif count < 2 or count > 3:
-                newScreen[i][j] = ' '
-            else:
-                newScreen[i][j] = screen[i][j]    
-    screen = newScreen
-</code></pre>
-                    </div>
-                </section>
-                <section>
-                    <p class="fragment">Step 6: Console</p>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-def Start():
-    os.system("cls")
-    print('== Game of Life ==')
-    print('Press any key...')
-    input()
-    os.system("cls")
-    Init()
-    PrintScreen()
-    c = input()
-    while c!= 'q':
-        os.system("cls")
-        Update()
-        PrintScreen()   
-        c = input()
-    print('End')
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+x=['mushrooms', 'green peppers', 'extra cheese']
+def make_pizza(toppings):
+    for y in toppings:
+        print(y, end=', ')
 
-Start()
+make_pizza(x)
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def make_pizza(topping_1, topping_2, topping_3):
+    print(topping_1, topping_2, topping_3)
+
+make_pizza('mushrooms', 'green peppers', 'extra cheese')
+</code></pre>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p>However, sometimes we are not sure about the exact number of the arguments.</p>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <ul>
+                        <li class="fragment">
+                            <p>We can pass multiple arguments at once in the following way.</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def make_pizza(*toppings):
+    print(toppings)
+
+make_pizza('pepperoni')
+make_pizza('mushrooms', 'green peppers', 'extra cheese')
+</code></pre>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p>Note that Python packs the arguments into a tuple, even if the function receives only one value.</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def make_pizza(*toppings):
+    for topping in toppings:
+        print("- " + topping)
+
+make_pizza('pepperoni')
+make_pizza('mushrooms', 'green peppers', 'extra cheese')
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="output" data-trim contenteditable>
+- pepperoni
+- mushrooms
+- green peppers
+- extra cheese
 </code></pre>
                     </div>
                 </section>
                 <section>
                     <ul>
                         <li class="fragment">
-                            <p>One of the earliest questions that the researchers studying the Game of Life asked themselves was this: "Is there an initial configuration of live cells that expands forever?"</p>
+                            <p>Mixing Positional and Arbitrary Arguments</p>
                         </li>
                         <li class="fragment">
-                            <p><b>glider</b></p>
-                        </li>
-                        <div class="fragment"><img data-src="glider.png" style="height: 100pt"></div>
-                        <li class="fragment">
-                            <p>Demo: glider</p>
+                            <p><b>If you want a function to accept several different kinds of arguments, the parameter that accepts an arbitrary number of arguments must be placed last in the function definition.</b></p>
                         </li>
                     </ul>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def make_pizza(size, *toppings):
+    print(str(size) + "-inch pizza:")
+    for topping in toppings:
+        print("- " + topping)
+
+make_pizza(16, 'pepperoni')
+make_pizza(12, 'mushrooms', 'green peppers', 'extra cheese')
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="output" data-trim contenteditable>
+16-inch pizza:
+- pepperoni
+12-inch pizza:
+- mushrooms
+- green peppers
+- extra cheese
+</code></pre>
+                    </div>
                 </section>
                 <section>
                     <ul>
                         <li class="fragment">
-                            <p>Glider gun</p>
+                            <p>Using Arbitrary Keyword Arguments</p>
                         </li>
-                        <div class="fragment"><img data-src="glidergun.png" style="height: 150pt"></div>
-                        <div class="fragment"><img data-src="glider_gun.gif" style="height: 150pt"></div>
                     </ul>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def build_profile(**user_info):
+    print(user_info)
+
+build_profile(location='Shanghai',field='Management')
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="output" data-trim contenteditable>
+{'location': 'Shanghai', 'field': 'Management'}
+</code></pre>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p>Using Arbitrary Keyword Arguments</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def build_profile(first, last, **user_info):
+    for key, value in user_info.items():
+        profile[key] = value
+    return first, last, profile
+
+user_profile = build_profile('albert', 'einstein',
+                            location='princeton',
+                            field='physics')
+print(user_profile)
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="output" data-trim contenteditable>
+('albert', 'einstein', 
+{'location': 'princeton', 'field': 'physics'})
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <div class="fragment">
+                        <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def build_profile(*name, **user_info):
+    print(name)
+    print(user_info)
+
+build_profile('albert', 'einstein',
+               location='princeton',
+               field='physics')
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="output" data-trim contenteditable>
+('albert', 'einstein')
+{'location': 'princeton', 'field': 'physics'}
+</code></pre>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p>As a tradition, we often use *args and **kw</p>
+                        </li>
+                    </ul>
+                </section>
+                <section data-background-image="bg.png">
+                    <div class="div-c">
+                        <ul>
+                            <li class="fragment">
+                                <p>Example</p>
+                            </li>
+                        </ul>
+                        <div class="fragment">
+                            <pre><code class="language-Python" data-line-numbers data-trim contenteditable>
+def test(x,y=1,*a,**b):
+    print(x,y,a,b)
+
+test(1)
+test(1,2)
+test(1,2,3)
+test(1,2,3,4)
+test(x=1,y=2)
+test(1,a=2)
+test(1,2,3,a=4)
+test(1,2,3,y=4)
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <ul>
+                            <li class="fragment">
+                                <p>Result</p>
+                            </li>
+                        </ul>
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+
+
+1 1 () {}
+1 2 () {}
+1 2 (3,) {}
+1 2 (3, 4) {}
+1 2 () {}
+1 1 () {'a': 2}
+1 2 (3,) {'a': 4}
+TypeError: test() got multiple values
+</code></pre>
+                        </div>
+                    </div>
                 </section>
             </section>
             <section>
@@ -463,7 +1045,7 @@ Start()
                     <ul>
                         <li>Functions</li>
                         <ul>
-                            <li>Reading: Python for Everybody, Chapter 10.1-10.5, 10.7-10.8</li>
+                            <li>Reading: Python for Everybody, Chapter 4</li>
                             <li>Reading: Python Crash Course, Chapter 8</li>
                         </ul>
                     </ul>
@@ -471,144 +1053,51 @@ Start()
             </section>
         </div>
     </div>
-    <script src="lib/js/head.min.js"></script>
-    <script src="js/reveal.js"></script>
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/search/search.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script src="plugin/zoom_old/zoom_old.js"></script>
+    <script src="plugin/chalkboard/plugin.js"></script>
+    <script src="plugin/customcontrols/plugin.js"></script>
     <script>
-    // More info about config & dependencies:
-    // - https://github.com/hakimel/reveal.js#configuration
-    // - https://github.com/hakimel/reveal.js#dependencies
+    // Also available as an ES module, see:
+    // https://revealjs.com/initialization/
     Reveal.initialize({
-        // The "normal" size of the presentation, aspect ratio will be preserved
-        // when the presentation is scaled to fit different resolutions. Can be
-        // specified using percentage units.
-        width: 960,
-        height: 700,
-
-        // Factor of the display size that should remain empty around the content
-        margin: 0.1,
-
-        // Bounds for smallest/largest possible scale to apply to content
-        minScale: 0.2,
-        maxScale: 1.5,
-
-        // Display controls in the bottom right corner
         controls: true,
-
-        // Display a presentation progress bar
         progress: true,
-
-        // Set default timing of 2 minutes per slide
-        defaultTiming: 120,
-
-        // Display the page number of the current slide
-        slideNumber: true,
-
-        // Push each slide change to the browser history
-        history: false,
-
-        // Enable keyboard shortcuts for navigation
-        keyboard: true,
-
-        // Enable the slide overview mode
-        overview: true,
-
-        // Vertical centering of slides
         center: true,
+        hash: true,
+        customcontrols: {
+            controls: [{
+                    id: 'toggle-overview',
+                    title: 'Toggle overview (O)',
+                    icon: '<i class="fa fa-th"></i>',
+                    action: 'Reveal.toggleOverview();'
+                },
+                {
+                    icon: '<i class="fa fa-pen-square"></i>',
+                    title: 'Toggle chalkboard (B)',
+                    action: 'RevealChalkboard.toggleChalkboard();'
+                },
+                {
+                    icon: '<i class="fa fa-pen"></i>',
+                    title: 'Toggle notes canvas (C)',
+                    action: 'RevealChalkboard.toggleNotesCanvas();'
+                }
+            ]
+        },
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealChalkboard, RevealCustomControls, RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath.KaTeX],
 
-        // Enables touch navigation on devices with touch input
-        touch: true,
 
-        // Loop the presentation
-        loop: false,
 
-        // Change the presentation direction to be RTL
-        rtl: false,
-
-        // Randomizes the order of slides each time the presentation loads
-        shuffle: false,
-
-        // Turns fragments on and off globally
-        fragments: true,
-
-        // Flags if the presentation is running in an embedded mode,
-        // i.e. contained within a limited portion of the screen
-        embedded: false,
-
-        // Flags if we should show a help overlay when the questionmark
-        // key is pressed
-        help: true,
-
-        // Flags if speaker notes should be visible to all viewers
-        showNotes: false,
-
-        // Global override for autolaying embedded media (video/audio/iframe)
-        // - null: Media will only autoplay if data-autoplay is present
-        // - true: All media will autoplay, regardless of individual setting
-        // - false: No media will autoplay, regardless of individual setting
-        autoPlayMedia: null,
-
-        // Number of milliseconds between automatically proceeding to the
-        // next slide, disabled when set to 0, this value can be overwritten
-        // by using a data-autoslide attribute on your slides
-        autoSlide: 0,
-
-        // Stop auto-sliding after user input
-        autoSlideStoppable: true,
-
-        // Use this method for navigation when auto-sliding
-        autoSlideMethod: Reveal.navigateNext,
-
-        // Enable slide navigation via mouse wheel
-        mouseWheel: false,
-
-        // Hides the address bar on mobile devices
-        hideAddressBar: true,
-
-        // Opens links in an iframe preview overlay
-        previewLinks: false,
-
-        // Transition style
-        transition: 'slide', // none/fade/slide/convex/concave/zoom
-
-        // Transition speed
-        transitionSpeed: 'default', // default/fast/slow
-
-        // Transition style for full page slide backgrounds
-        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
-
-        // Number of slides away from the current that are visible
-        viewDistance: 3,
-
-        // Parallax background image
-        parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
-
-        // Parallax background size
-        parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
-
-        // Number of pixels to move the parallax background per slide
-        // - Calculated automatically unless specified
-        // - Set to 0 to disable movement along an axis
-        parallaxBackgroundHorizontal: null,
-        parallaxBackgroundVertical: null,
-
-        // The display mode that will be used to show slides
-        display: 'block',
-
-        dependencies: [
-            { src: 'plugin/markdown/marked.js' },
-            { src: 'plugin/markdown/markdown.js' },
-            { src: 'plugin/notes/notes.js', async: true },
-            { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-            // Zoom in and out with Alt+click
-            { src: 'plugin/zoom-js/zoom.js', async: true },
-
-            // Speaker notes
-            { src: 'plugin/notes/notes.js', async: true },
-
-            // MathJax
-            { src: 'plugin/math/math.js', async: true },
-            { src: 'plugin/line-numbers/line-numbers.js' }
-        ]
+    });
+    Reveal.configure({
+        pdfSeparateFragments: false
     });
     </script>
 </body>
